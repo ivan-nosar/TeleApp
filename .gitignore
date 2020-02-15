@@ -1,0 +1,9 @@
+# Node modules
+node_modules/
+
+# Folders with build artifacts
+dist/
+release/
+
+# macOS filesystem metadata
+.DS_Store

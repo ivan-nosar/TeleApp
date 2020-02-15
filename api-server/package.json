@@ -1,0 +1,25 @@
+{
+  "name": "api-server",
+  "author": "Ivan Nosar",
+  "version": "0.0.1",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ivan-nosar/TeleApp.git/api-server"
+  },
+  "description": "TeleApp core service",
+  "main": "./dist/main.js",
+  "scripts": {
+    "dev": "",
+    "lint": "tslint -c tslint.json -p tsconfig.json",
+    "lint:fix": "npm run lint -- --fix",
+    "start": ""
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "cross-env": "^7.0.0",
+    "tslint": "^6.0.0",
+    "tslint-eslint-rules": "^5.4.0",
+    "typescript": "^3.7.5"
+  }
+}

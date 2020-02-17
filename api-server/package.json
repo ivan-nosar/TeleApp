@@ -5,21 +5,26 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/ivan-nosar/TeleApp.git/api-server"
+    "url": "https://github.com/ivan-nosar/TeleApp/tree/master/api-server"
   },
   "description": "TeleApp core service",
   "main": "./dist/main.js",
   "scripts": {
-    "dev": "",
+    "build": "tsc --project tsconfig.json",
+    "clean": "shx rm -rf ./dist",
+    "dev": "tsc-watch --project tsconfig.json --preserveWatchOutput --onSuccess \"npm run start\"",
     "lint": "tslint -c tslint.json -p tsconfig.json",
     "lint:fix": "npm run lint -- --fix",
-    "start": ""
+    "start": "node --harmony --max-old-space-size=8192 ./dist/main.js"
   },
   "dependencies": {},
   "devDependencies": {
-    "cross-env": "^7.0.0",
-    "tslint": "^6.0.0",
-    "tslint-eslint-rules": "^5.4.0",
-    "typescript": "^3.7.5"
+    "@types/node": "13.7.1",
+    "cross-env": "7.0.0",
+    "shx": "0.3.2",
+    "tslint": "5.20.1",
+    "tslint-eslint-rules": "5.4.0",
+    "tsc-watch": "4.1.0",
+    "typescript": "3.7.5"
   }
 }

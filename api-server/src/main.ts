@@ -1,10 +1,20 @@
 import { logger } from "./logger/logger";
 
-function main() {
-    logger.log("Hello world");
-    logger.info("Hello world");
-    logger.warning("Hello world");
-    logger.error("Hello world");
+function sleep(miliseconds: number) {
+    return new Promise(resolve => setTimeout(resolve, miliseconds));
 }
 
-main();
+async function main() {
+    while (true) {
+        logger.log("Hello log");
+        logger.info("Hello info");
+        logger.warning("Hello warning");
+        logger.error("Hello error");
+        logger.log(`${Math.random()}`);
+        await sleep(1000);
+    }
+}
+
+main().then(result => {
+    logger.log("Done");
+});

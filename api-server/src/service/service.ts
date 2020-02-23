@@ -8,7 +8,7 @@ export class Service {
 
     public async start() {
         logger.log("Start");
-        await sleep(10000);
+        await sleep(5000);
         logger.log("End");
     }
 }

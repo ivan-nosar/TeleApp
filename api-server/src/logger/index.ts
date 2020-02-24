@@ -1,17 +1,17 @@
 class Logger {
-    public log(message: string) {
+    public log(message: any) {
         console.log(message);
     }
 
-    public warning(message: string) {
+    public warning(message: any) {
         console.warn(message);
     }
 
-    public error(message: string) {
+    public error(message: any) {
         console.error(message);
     }
 
-    public info(message: string) {
+    public info(message: any) {
         console.info(message);
     }
 }

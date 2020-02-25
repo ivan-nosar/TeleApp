@@ -1,27 +1,35 @@
 import * as bodyParser from "body-parser";
 import * as express from "express";
 import { Application } from "express";
+import { UserController } from "./controllers/user";
 import { HomeController } from "./controllers/home";
-import { BaseController } from "./controllers/base-controller";
-import { logger } from "../logger/index";
+import { BaseController } from "./controllers/base";
+import { logger } from "../logger";
+import { databaseManager } from "./database/database-manager";
 
 export class Service {
-    public readonly app: Application;
-    public readonly port: number;
+    private readonly app: Application;
+    private readonly port: number;
 
-    constructor(port: number) {
+    constructor(serviceParams: ServiceParams) {
         this.app = express();
-        this.port = port;
+        this.port = serviceParams.port;
 
         this.initializeMiddleware();
         this.initializeRoutes();
         this.initializeErrorHandlers();
     }
 
-    public start() {
-        this.app.listen(this.port, () => {
-            console.log(`App listening on the http://localhost:${this.port}`);
-        });
+    public async start() {
+        try {
+            await databaseManager.sync();
+            this.app.listen(this.port, () => {
+                console.log(`App listening on the http://localhost:${this.port}`);
+            });
+        } catch (error) {
+            logger.error("Unexpected error: Starting server");
+            logger.error(error);
+        }
     }
 
     private initializeMiddleware() {
@@ -29,7 +37,7 @@ export class Service {
             bodyParser.json(),
             bodyParser.urlencoded({ extended: true }),
             (req: any, _: any, next: any) => {
-                logger.log(`Request logged: ${req.method} ${req.path}`);
+                logger.log(`Request: ${req.method} ${req.path}`);
                 next();
             }
         ];
@@ -42,6 +50,7 @@ export class Service {
     private initializeRoutes() {
         const controllers: BaseController[] = [
             new HomeController(),
+            new UserController(),
         ];
 
         controllers.forEach(controller => {
@@ -54,4 +63,8 @@ export class Service {
             res.status(404).send(`Unresolved route: ${req.method} ${req.path}`);
         });
     }
+}
+
+export interface ServiceParams {
+    port: number;
 }

@@ -1,4 +1,4 @@
-import { BaseController } from "./base-controller";
+import { BaseController } from "./base";
 import { Request, Response } from "express";
 import { logger } from "../../logger/index";
 

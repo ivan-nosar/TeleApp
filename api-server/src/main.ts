@@ -1,3 +1,4 @@
+import "reflect-metadata";
 import { Service, ServiceParams } from "./service/service";
 
 // ToDo: Load config with port, FFs and etc.

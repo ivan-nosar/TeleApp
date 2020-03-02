@@ -1,53 +1,29 @@
-// Don't use `import` with Sequelize. Model's methods will be broken
-const Sequelize = require("sequelize");
+import { createConnection, EntitySchema } from "typeorm";
+import { User } from "./models/user";
 
 class DatabaseManager {
-
-    private sequelize: any;
+    private connectionInfo: DbConnectionInfo;
 
     constructor(dbConnectionInfo: DbConnectionInfo) {
-        this.sequelize = new Sequelize(
-            dbConnectionInfo.database,
-            dbConnectionInfo.user,
-            dbConnectionInfo.password,
-            {
-                dialect: "mysql",
-                host: dbConnectionInfo.host,
-                port: dbConnectionInfo.port,
-                define: {
-                    timestamps: false
-                }
-            }
-        );
+        this.connectionInfo = dbConnectionInfo;
     }
 
-    public async sync() {
-        const User = this.sequelize.define("user", {
-            id: {
-                type: Sequelize.INTEGER,
-                autoIncrement: true,
-                primaryKey: true,
-                allowNull: false
-            },
-            name: {
-                type: Sequelize.STRING,
-                allowNull: false
-            },
-            email: {
-                type: Sequelize.STRING,
-                allowNull: false
-            },
-            password: {
-                type: Sequelize.STRING,
-                allowNull: false
-            }
+    public async connect() {
+        const entities = [
+            User
+        ];
+
+        await createConnection({
+            type: "mysql",
+            host: this.connectionInfo.host,
+            port: this.connectionInfo.port,
+            username: this.connectionInfo.user,
+            password: this.connectionInfo.password,
+            database: this.connectionInfo.database,
+            entities,
+            synchronize: true,
+            logging: false
         });
-
-        await this.sequelize.sync();
-    }
-
-    private defineModels() {
-
     }
 }
 

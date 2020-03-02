@@ -2,7 +2,6 @@ import * as bodyParser from "body-parser";
 import * as express from "express";
 import { Application } from "express";
 import { UserController } from "./controllers/user";
-import { HomeController } from "./controllers/home";
 import { BaseController } from "./controllers/base";
 import { logger } from "../logger";
 import { databaseManager } from "./database/database-manager";
@@ -22,7 +21,7 @@ export class Service {
 
     public async start() {
         try {
-            await databaseManager.sync();
+            await databaseManager.connect();
             this.app.listen(this.port, () => {
                 console.log(`App listening on the http://localhost:${this.port}`);
             });
@@ -49,12 +48,11 @@ export class Service {
 
     private initializeRoutes() {
         const controllers: BaseController[] = [
-            new HomeController(),
             new UserController(),
         ];
 
         controllers.forEach(controller => {
-            this.app.use(controller.path, controller.router);
+            this.app.use(controller.path!, controller.router!);
         });
     }
 

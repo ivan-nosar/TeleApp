@@ -1,8 +1,10 @@
-import { createConnection, EntitySchema } from "typeorm";
-import { User } from "./models/user";
+import { createConnection, Connection } from "typeorm";
+import { User } from "./entities";
 
 class DatabaseManager {
     private connectionInfo: DbConnectionInfo;
+    // tslint:disable-next-line: variable-name
+    private _connection?: Connection;
 
     constructor(dbConnectionInfo: DbConnectionInfo) {
         this.connectionInfo = dbConnectionInfo;
@@ -13,7 +15,7 @@ class DatabaseManager {
             User
         ];
 
-        await createConnection({
+        this._connection = await createConnection({
             type: "mysql",
             host: this.connectionInfo.host,
             port: this.connectionInfo.port,
@@ -24,6 +26,13 @@ class DatabaseManager {
             synchronize: true,
             logging: false
         });
+    }
+
+    public get connection(): Connection {
+        if (!this._connection) {
+            throw new Error("Connection to database is not initiated");
+        }
+        return this._connection;
     }
 }
 

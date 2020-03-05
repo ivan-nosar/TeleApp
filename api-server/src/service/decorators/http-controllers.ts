@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { BaseController } from "../controllers/base";
-import { MethodDecorator, Class } from "./interfaces";
+import { MethodDecorator } from "./interfaces";
 
 const supportedMethods = [
     "get",
@@ -9,6 +9,9 @@ const supportedMethods = [
     "post",
     "put"
 ] as const;
+
+const handlerMethodNameTemplate: string = "&__{0}__%{1}%__" as const;
+const handlerMethodRouteTemplate: string = "&__{0}Route__%{1}%__" as const;
 
 type SupportedHttpMethod = typeof supportedMethods[number];
 
@@ -22,17 +25,34 @@ export function Controller(path: string) {
         });
 
         supportedMethods.forEach((method: SupportedHttpMethod) => {
-            if (mutable[`$__${method}__`]) {
-                registerRoute(
-                    mutable,
-                    mutable[`$__${method}__`],
-                    method,
-                    mutable[`$__${method}Route__`]
-                );
+            const pattern = RegExp(handlerMethodNameTemplate.format(method, "(.*)"));
+            const methodRelatedKeys = Object
+                .keys(mutable)
+                .filter(key => key.search(pattern) !== -1)
+                .map(key => {
+                    const matches = key.match(pattern);
+                    if (matches && matches.length > 1) {
+                        return {
+                            name: key,
+                            route: handlerMethodRouteTemplate.format(method, matches[1])
+                        };
+                    }
+                    return {};
+                });
 
-                delete mutable[`$__${method}__`];
-                delete mutable[`$__${method}Route__`];
-            }
+            methodRelatedKeys.forEach(keys => {
+                if (mutable[keys.name!]) {
+                    registerRoute(
+                        mutable,
+                        mutable[keys.name!],
+                        method,
+                        mutable[keys.route!]
+                    );
+
+                    delete mutable[keys.name!];
+                    delete mutable[keys.route!];
+                }
+            });
         });
     };
 }
@@ -113,8 +133,10 @@ function registerHandlerMethodName(
     method: SupportedHttpMethod,
     path?: string
 ) {
-    const handlerMethodNameKey = `$__${method}__`;
-    const handlerMethodRouteKey = `$__${method}Route__`;
+    const handlerMethodNameKey =
+        handlerMethodNameTemplate.format(method, path || "");
+    const handlerMethodRouteKey =
+        handlerMethodRouteTemplate.format(method, path || "");
     const assignableObject: any = {};
     assignableObject[handlerMethodNameKey] = handlerMethodName;
     assignableObject[handlerMethodRouteKey] = path;
@@ -133,10 +155,7 @@ function registerRoute(
         controller[handlerMethodName] instanceof Function
     ) {
         const route = path || "/";
-        try {
-            controller.router[method](route, controller[handlerMethodName]);
-        } catch (error) {
-            console.log(error);
-        }
+        // We have to `bind` method because Express calls router methods losing their context
+        controller.router[method](route, controller[handlerMethodName].bind(controller));
     }
 }

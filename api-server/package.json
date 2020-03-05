@@ -22,7 +22,8 @@
     "express": "4.17.1",
     "mysql2": "2.1.0",
     "reflect-metadata": "0.1.13",
-    "typeorm": "0.2.22"
+    "typeorm": "0.2.22",
+    "validate-typescript": "^4.0.2"
   },
   "devDependencies": {
     "@types/express": "4.17.2",

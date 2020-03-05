@@ -1,4 +1,5 @@
 import "reflect-metadata";
+import "./helpers/extensions/index";
 import { Service, ServiceParams } from "./service/service";
 
 // ToDo: Load config with port, FFs and etc.

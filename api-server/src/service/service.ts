@@ -23,7 +23,7 @@ export class Service {
         try {
             await databaseManager.connect();
             this.app.listen(this.port, () => {
-                console.log(`App listening on the http://localhost:${this.port}`);
+                logger.log(`App listening on the http://localhost:${this.port}`);
             });
         } catch (error) {
             logger.error("Unexpected error: Starting server");

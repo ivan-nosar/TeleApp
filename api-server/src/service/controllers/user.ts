@@ -1,55 +1,74 @@
 import { BaseController } from "./base";
-import { Request, Response, Router } from "express";
-import { User } from "../database/models/user";
+import { Request, Response } from "express";
+import * as Entities from "../database/entities";
+import * as Models from "../models";
 import { Get, Controller, Delete, Patch, Post } from "../decorators/http-controllers";
+import { ValidateBody, Safe } from "../decorators/http-validators";
+import { assignOwnPropertiesTo, updateOwnPropertiesWith } from "../../helpers/models";
 
-// ToDo: Add checks for data integrity, logs, error handling, standard errors
 @Controller("/users")
 export class UserController extends BaseController {
 
     @Get("/:id")
+    @Safe
     async get(req: Request, res: Response) {
 
         const id = req.params["id"];
-        const user = await User.findOne(id);
-        res.send(user);
+        const user = await Entities.User.findOne(id);
+        if (user) {
+            res.send(user);
+        } else {
+            this.notExists(res, id);
+        }
     }
 
     @Delete("/:id")
+    @Safe
     async delete(req: Request, res: Response) {
         const id: number = Number(req.params["id"]);
 
-        await User.delete({ id });
-        res.send("User deleted");
+        if (await Entities.User.findOne(id)) {
+            await Entities.User.delete({ id });
+            res.sendStatus(200);
+        } else {
+            this.notExists(res, `${id}`);
+        }
     }
 
     @Patch("/:id")
+    @ValidateBody(Models.User, false)
+    @Safe
     async patch(req: Request, res: Response) {
         const body = req.body;
         const id = req.params["id"];
-        const user = await User.findOne(id);
+        const user = await Entities.User.findOne(id);
 
         if (user) {
-            user.name = body.name;
-            user.email = body.email;
-            user.password = body.password;
+            updateOwnPropertiesWith(user, body, ["id"]);
             await user.save();
 
-            // If some property not defined - it wouldn't be updated. 
-            // But answer will not contains this property
             res.send(user);
+        } else {
+            this.notExists(res, id);
         }
     }
 
     @Post()
+    @ValidateBody(Models.User)
+    @Safe
     async post(req: Request, res: Response) {
         const body = req.body;
-        const user = new User();
-        user.name = body.name;
-        user.email = body.email;
-        user.password = body.password;
-        await user.save();
 
+        const user = new Entities.User();
+        assignOwnPropertiesTo(body, user, ["id"]);
+
+        await user.save();
         res.send(user);
+    }
+
+    private notExists(res: Response, id: string) {
+        res.status(410).send({
+            message: `Object with id = ${id} doesn't exists`
+        });
     }
 }

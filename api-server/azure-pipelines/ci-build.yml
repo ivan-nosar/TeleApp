@@ -47,8 +47,3 @@ steps:
         testResultsFiles: 'api-server/**/*-test-results.xml'
         searchFolder: '$(Build.SourcesDirectory)/api-server/test/reports'
     condition: always()
-
-
-    - task: PublishTestResults@2
-    displayName: 'Publish Test Results'
-    inputs:

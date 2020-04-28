@@ -21,23 +21,29 @@ steps:
     - checkout: self
 
     - task: Npm@1
+    displayName: 'Install packages'
+    inputs:
+        command: 'install'
+        workingDir: 'api-server'
+
+    - task: Npm@1
     displayName: 'Run linter validation'
     inputs:
-        command: custom
+        command: 'custom'
         customCommand: 'run lint'
         workingDir: 'api-server'
 
     - task: Npm@1
     displayName: 'Build service'
     inputs:
-        command: custom
+        command: 'custom'
         customCommand: 'run build'
         workingDir: 'api-server'
 
     - task: Npm@1
     displayName: 'Run unit-tests'
     inputs:
-        command: custom
+        command: 'custom'
         customCommand: 'run unit-test'
         workingDir: 'api-server'
 

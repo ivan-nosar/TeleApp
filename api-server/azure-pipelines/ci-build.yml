@@ -20,11 +20,8 @@ pool:
 steps:
   - checkout: self
 
-  - task: Npm@1
+  - script: cd api-server && npm install
     displayName: 'Install packages'
-    inputs:
-      command: 'install'
-      workingDir: 'api-server'
 
   - task: Npm@1
     displayName: 'Run linter validation'

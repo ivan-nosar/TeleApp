@@ -18,38 +18,38 @@ pool:
     vmImage: 'ubuntu-latest'
 
 steps:
-    - checkout: self
+  - checkout: self
 
-    - task: Npm@1
+  - task: Npm@1
     displayName: 'Install packages'
     inputs:
-        command: 'install'
-        workingDir: 'api-server'
+      command: 'install'
+      workingDir: 'api-server'
 
-    - task: Npm@1
+  - task: Npm@1
     displayName: 'Run linter validation'
     inputs:
-        command: 'custom'
-        customCommand: 'run lint'
-        workingDir: 'api-server'
+      command: 'custom'
+      customCommand: 'run lint'
+      workingDir: 'api-server'
 
-    - task: Npm@1
+  - task: Npm@1
     displayName: 'Build service'
     inputs:
-        command: 'custom'
-        customCommand: 'run build'
-        workingDir: 'api-server'
+      command: 'custom'
+      customCommand: 'run build'
+      workingDir: 'api-server'
 
-    - task: Npm@1
+  - task: Npm@1
     displayName: 'Run unit-tests'
     inputs:
-        command: 'custom'
-        customCommand: 'run unit-test'
-        workingDir: 'api-server'
+      command: 'custom'
+      customCommand: 'run unit-test'
+      workingDir: 'api-server'
 
-    - task: PublishTestResults@2
+  - task: PublishTestResults@2
     displayName: 'Publish unit-test results report'
     inputs:
-        testResultsFiles: 'api-server/**/*-test-results.xml'
-        searchFolder: '$(Build.SourcesDirectory)/api-server/test/reports'
+      testResultsFiles: 'api-server/**/*-test-results.xml'
+      searchFolder: '$(Build.SourcesDirectory)/api-server/test/reports'
     condition: always()

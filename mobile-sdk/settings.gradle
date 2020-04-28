@@ -1,0 +1,2 @@
+rootProject.name='Tele App - Android SDK'
+include ':app'

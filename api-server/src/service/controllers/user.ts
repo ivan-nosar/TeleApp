@@ -22,6 +22,14 @@ export class UserController extends BaseController {
         }
     }
 
+    @Get("/")
+    @Safe
+    async list(req: Request, res: Response) {
+
+        const allUsers = await Entities.User.find();
+        res.send(allUsers);
+    }
+
     @Delete("/:id")
     @Safe
     async delete(req: Request, res: Response) {
@@ -58,6 +66,13 @@ export class UserController extends BaseController {
     @Safe
     async post(req: Request, res: Response) {
         const body = req.body;
+        const existedUser = await Entities.User.findOne({ username: body.username });
+        if (existedUser) {
+            res.status(409).send({
+                message: `User with username = "${existedUser.username}" already exists`
+            });
+            return;
+        }
 
         const user = new Entities.User();
         assignOwnPropertiesTo(body, user, ["id"]);
@@ -68,7 +83,7 @@ export class UserController extends BaseController {
 
     private notExists(res: Response, id: string) {
         res.status(410).send({
-            message: `Object with id = ${id} doesn't exists`
+            message: `User with id = ${id} doesn't exists`
         });
     }
 }

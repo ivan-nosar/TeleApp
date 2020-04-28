@@ -14,7 +14,7 @@ export function ValidateBody(schema: Object, strict?: boolean): MethodDecorator<
                 if (strict) {
                     validate(schema, body);
                 }
-                validateExtraProperties(schema, body);
+                validateExcessProperties(schema, body);
             } catch (error) {
                 const response: Response = args && args[1];
                 response.status(400).send(error.toJson());
@@ -41,7 +41,7 @@ export function Safe(target: any, propertyName: string, descriptor: PropertyDesc
     return descriptor;
 }
 
-function validateExtraProperties(schema: HashTable, object: HashTable) {
+function validateExcessProperties(schema: HashTable, object: HashTable) {
     const schemaKeys = Object.getOwnPropertyNames(schema);
     const objectKeys = Object.getOwnPropertyNames(object);
 

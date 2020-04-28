@@ -154,7 +154,7 @@ function registerRoute(
         controller[handlerMethodName] &&
         controller[handlerMethodName] instanceof Function
     ) {
-        const route = path || "/";
+        const route = controller.path + (path || "/");
         // We have to `bind` method because Express calls router methods losing their context
         controller.router[method](route, controller[handlerMethodName].bind(controller));
     }

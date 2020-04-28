@@ -1,4 +1,5 @@
-import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { BaseEntity, Column, Entity, ManyToOne, PrimaryGeneratedColumn, OneToMany } from "typeorm";
+import { App } from "./app";
 
 @Entity()
 export class User extends BaseEntity {
@@ -7,11 +8,14 @@ export class User extends BaseEntity {
     public id!: number;
 
     @Column()
-    public name!: string;
+    public username!: string;
 
     @Column()
     public email!: string;
 
     @Column()
     public password!: string;
+
+    @OneToMany(type => App, app => app.user)
+    public apps!: App[];
 }

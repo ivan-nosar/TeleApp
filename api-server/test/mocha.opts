@@ -1,0 +1,4 @@
+--exit
+--slow 200
+--timeout 5000
+--recursive "dist/test/**/*.js"

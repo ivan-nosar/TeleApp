@@ -16,7 +16,7 @@
     "lint": "tslint -c tslint.json -p tsconfig.json",
     "lint:fix": "npm run lint -- --fix",
     "start": "node --harmony --max-old-space-size=8192 ./dist/main.js",
-    "unit-test": "npm run build && cross-env NODE_ENV=test mocha --opts test/mocha.opts --reporter spec test/unit",
+    "unit-test": "npm run build && cross-env NODE_ENV=test mocha --reporter spec test/unit",
     "unit-test:ci": "npm run unit-test -- --forbid-only --reporter mocha-junit-reporter --reporter-options mochaFile=test/reports/unit-test-results.xml"
   },
   "dependencies": {

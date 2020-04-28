@@ -1,0 +1,5 @@
+exit: true
+slow: 200
+timeout: 5000
+recursive: true
+spec: "dist/test/**/*.js"

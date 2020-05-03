@@ -1,0 +1,130 @@
+{
+    "extends": [
+        "tslint-eslint-rules"
+    ],
+    "rules": {
+        "max-line-length": {
+            "options": [
+                120
+            ]
+        },
+        "no-bitwise": true,
+        "no-conditional-assignment": true,
+        "no-console": false,
+        "no-namespace": false,
+        "arrow-parens": [
+            true,
+            "ban-single-arg-parens"
+        ],
+        "interface-name": false,
+        "prefer-for-of": false,
+        "arrow-return-shorthand": true,
+        "ban": [
+            true,
+            [
+                "_",
+                "assign"
+            ],
+            [
+                "_",
+                "concat"
+            ],
+            [
+                "_",
+                "extend"
+            ]
+        ],
+        "class-name": true,
+        "curly": true,
+        "eofline": true,
+        "import-spacing": true,
+        "label-position": true,
+        "new-parens": true,
+        "no-angle-bracket-type-assertion": true,
+        "no-arg": true,
+        "no-consecutive-blank-lines": true,
+        "no-construct": true,
+        "no-debugger": true,
+        "no-duplicate-variable": true,
+        "no-empty": true,
+        "no-trailing-whitespace": true,
+        "no-unnecessary-initializer": true,
+        "no-unsafe-finally": true,
+        "no-unused-expression": true,
+        "no-var-keyword": true,
+        "one-line": [
+            true,
+            "check-open-brace",
+            "check-catch",
+            "check-else",
+            "check-whitespace"
+        ],
+        "prefer-const": true,
+        "semicolon": [
+            true,
+            "always"
+        ],
+        "space-before-function-paren": [
+            true,
+            {
+                "anonymous": "always",
+                "named": "never",
+                "asyncArrow": "always",
+                "method": "never",
+                "constructor": "never"
+            }
+        ],
+        "space-within-parens": false,
+        "triple-equals": [
+            true,
+            "allow-null-check"
+        ],
+        "typedef-whitespace": [
+            true,
+            {
+                "call-signature": "nospace",
+                "index-signature": "nospace",
+                "parameter": "nospace",
+                "property-declaration": "nospace",
+                "variable-declaration": "nospace"
+            },
+            {
+                "call-signature": "onespace",
+                "index-signature": "onespace",
+                "parameter": "onespace",
+                "property-declaration": "onespace",
+                "variable-declaration": "onespace"
+            }
+        ],
+        "variable-name": [
+            true,
+            "allow-pascal-case",
+            "allow-snake-case",
+            "ban-keywords",
+            "check-format"
+        ],
+        "whitespace": [
+            true,
+            "check-branch",
+            "check-decl",
+            "check-operator",
+            "check-module",
+            "check-preblock",
+            "check-rest-spread",
+            "check-separator",
+            "check-type",
+            "check-type-operator",
+            "check-typecast"
+        ],
+        "object-curly-spacing": [
+            true,
+            "always"
+        ],
+        "no-unnecessary-semicolons": false,
+        "no-eval": true,
+        "quotemark": [true, "double"],
+        "ter-indent": [true, 4]
+    },
+    "defaultSeverity": "warning",
+    "jsRules": {}
+}

@@ -1,0 +1,52 @@
+trigger:
+    branches:
+        include:
+        - master
+    paths:
+        include:
+        - api-server/*
+
+pr:
+    branches:
+        include:
+        - master
+    paths:
+        include:
+        - api-server/*
+
+pool:
+    vmImage: 'ubuntu-18.04'
+
+steps:
+  - checkout: self
+
+  - script: cd api-server && npm install
+    displayName: 'Install packages'
+
+  - task: Npm@1
+    displayName: 'Run linter validation'
+    inputs:
+      command: 'custom'
+      customCommand: 'run lint'
+      workingDir: 'api-server'
+
+  - task: Npm@1
+    displayName: 'Build service'
+    inputs:
+      command: 'custom'
+      customCommand: 'run build'
+      workingDir: 'api-server'
+
+  - task: Npm@1
+    displayName: 'Run unit-tests'
+    inputs:
+      command: 'custom'
+      customCommand: 'run unit-test'
+      workingDir: 'api-server'
+
+  - task: PublishTestResults@2
+    displayName: 'Publish unit-test results report'
+    inputs:
+      testResultsFiles: '**-test-results.xml'
+      searchFolder: '$(Build.SourcesDirectory)/api-server/test/reports'
+    condition: always()

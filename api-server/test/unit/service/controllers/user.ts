@@ -33,43 +33,67 @@ describe("UserController", () => {
 
     describe("#get", () => {
 
-        it.only("should return existed user", async () => {
-            const request = {
-                params: {
-                    id: existedId
-                }
-            };
-            const response = mockResponse();
-            await controllerUnderTest.get(request as any, response as any);
+        it("should return existed user", async () => {
+            // const request = {
+            //     params: {
+            //         id: existedId
+            //     }
+            // };
+            // const response = mockResponse();
+            // await controllerUnderTest.get(request as any, response as any);
 
-            // should.strictEqual(actual, expected);
-            console.log(response);
-            //assert.notCalled(notExistsStub);
+            // // should.strictEqual(actual, expected);
+            // console.log(response);
+            // //assert.notCalled(notExistsStub);
         });
 
-        // it("should return 410 status code for non-existed user", () => {
-        //     const raw = "";
-        //     const actual = encode(raw);
-        //     const expected = "";
+        it("should return 410 status code for non-existed user", () => {
+            // const raw = "";
+            // const actual = encode(raw);
+            // const expected = "";
 
-        //     should.strictEqual(actual, expected);
-        //     assert.calledOnce(notExistsStub);
-        // });
+            // should.strictEqual(actual, expected);
+            // assert.calledOnce(notExistsStub);
+        });
     });
 
     describe("#list", () => {
+        it("should return list of all users registered in service", async () => {
+            //
+        });
 
+        it("should empty list when no users registered in service", () => {
+            //
+        });
     });
 
     describe("#post", () => {
+        it("should return new user", async () => {
+            //
+        });
 
+        it("should return 409 status code for already existed user", () => {
+            //
+        });
     });
 
     describe("#patch", () => {
-        //const notExistsStub = sandbox.stub(controllerUnderTest, "notExists" as any);
+        it("should return updated user", async () => {
+            //
+        });
+
+        it("should return 410 status code for non-existed user", () => {
+            //
+        });
     });
 
     describe("#delete", () => {
-        //const notExistsStub = sandbox.stub(controllerUnderTest, "notExists" as any);
+        it("should return 200 status code for successfully deleted user", async () => {
+            //
+        });
+
+        it("should return 410 status code for non-existed user", () => {
+            //
+        });
     });
 });

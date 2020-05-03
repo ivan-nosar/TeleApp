@@ -8,14 +8,14 @@
     "url": "https://github.com/ivan-nosar/TeleApp/tree/master/api-server"
   },
   "description": "TeleApp core service",
-  "main": "./dist/main.js",
+  "main": "./dist/src/main.js",
   "scripts": {
     "build": "tsc --project tsconfig.json",
     "clean": "shx rm -rf ./dist",
     "dev": "tsc-watch --project tsconfig.json --preserveWatchOutput --onSuccess \"npm run start\"",
     "lint": "tslint -c tslint.json -p tsconfig.json",
     "lint:fix": "npm run lint -- --fix",
-    "start": "node --harmony --max-old-space-size=8192 ./dist/main.js",
+    "start": "node --harmony --max-old-space-size=8192 ./dist/src/main.js",
     "unit-test": "npm run build && cross-env NODE_ENV=test mocha --reporter spec test/unit",
     "unit-test:ci": "npm run unit-test -- --forbid-only --reporter mocha-junit-reporter --reporter-options mochaFile=test/reports/unit-test-results.xml"
   },

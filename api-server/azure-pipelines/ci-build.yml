@@ -15,7 +15,7 @@ pr:
         - api-server/*
 
 pool:
-    vmImage: 'ubuntu-latest'
+    vmImage: 'ubuntu-18.04'
 
 steps:
   - checkout: self

@@ -41,7 +41,7 @@ steps:
     displayName: 'Run unit-tests'
     inputs:
       command: 'custom'
-      customCommand: 'run unit-test'
+      customCommand: 'run unit-test:ci'
       workingDir: 'api-server'
 
   - task: PublishTestResults@2

@@ -4,7 +4,7 @@ import * as Entities from "../database/entities";
 import * as Models from "../models";
 import { Get, Controller, Delete, Patch, Post } from "../decorators/http-controllers";
 import { ValidateBody, Safe } from "../decorators/http-validators";
-import { assignOwnPropertiesTo, updateOwnPropertiesWith } from "../../helpers/models";
+import { assignOwnPropertiesTo, updateOwnPropertiesWith, fitToPropertiesOf } from "../../helpers/models";
 
 @Controller("/users")
 export class UserController extends BaseController {
@@ -16,6 +16,7 @@ export class UserController extends BaseController {
         const id = req.params["id"];
         const user = await Entities.User.findOne(id);
         if (user) {
+            fitToPropertiesOf(user, Models.User, ["password"]);
             res.send(user);
         } else {
             this.notExists(res, id);
@@ -26,7 +27,10 @@ export class UserController extends BaseController {
     @Safe
     async list(req: Request, res: Response) {
 
-        const allUsers = await Entities.User.find();
+        const allUsers = (await Entities.User.find()).map(user => {
+            fitToPropertiesOf(user, Models.User, ["password"]);
+            return user;
+        });
         res.send(allUsers);
     }
 
@@ -55,6 +59,7 @@ export class UserController extends BaseController {
             updateOwnPropertiesWith(user, body, ["id"]);
             await user.save();
 
+            fitToPropertiesOf(user, Models.User, ["password"]);
             res.send(user);
         } else {
             this.notExists(res, id);
@@ -78,6 +83,7 @@ export class UserController extends BaseController {
         assignOwnPropertiesTo(body, user, ["id"]);
 
         await user.save();
+        fitToPropertiesOf(user, Models.User, ["password"]);
         res.send(user);
     }
 

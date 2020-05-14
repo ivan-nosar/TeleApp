@@ -1,21 +1,20 @@
 import * as bodyParser from "body-parser";
 import * as express from "express";
 import { Application, Router, Request, Response } from "express";
-import * as Entities from "./database/entities";
 import { AppController, BaseController, UserController } from "./controllers";
 import { logger } from "../logger";
 import { databaseManager } from "./database/database-manager";
-import { decode, sign, verify, SignOptions } from "jsonwebtoken";
+import { AuthController } from "./controllers/authorize";
+import { configuration } from "../configuration";
 
 export class Service {
     private readonly app: Application;
     private readonly port: number;
-    private readonly jwsPrivateKey: string;
 
-    constructor(serviceParams: ServiceParams) {
+    constructor() {
         this.app = express();
-        this.port = serviceParams.port;
-        this.jwsPrivateKey = serviceParams.jwsPrivateKey;
+        const { port } = configuration;
+        this.port = port;
 
         this.initializeMiddleware();
         this.initializeRoutes();
@@ -51,6 +50,7 @@ export class Service {
 
     private initializeRoutes() {
         const controllers: BaseController[] = [
+            new AuthController(),
             new UserController(),
             new AppController(),
         ];
@@ -58,49 +58,6 @@ export class Service {
         controllers.forEach(controller => {
             this.app.use("/", controller.router!);
         });
-
-        const testPath = "/test";
-        const testRouter = Router();
-        testRouter.post("/", async (req: Request, res: Response) => {
-            const body = req.body;
-            if (typeof body.username === "string" &&
-                typeof body.password === "string") {
-
-                try {
-                    const existedUser = await Entities.User.findOne({
-                        username: body.username,
-                        password: body.password
-                    });
-
-                    if (!existedUser) {
-                        res.status(404).send({
-                            message: "User with specified username and password does not exists",
-                        });
-                        return;
-                    }
-
-                    const signOptions: SignOptions = {
-                        expiresIn: "1d"
-                    };
-                    const token = sign(
-                        { id: existedUser.id },
-                        this.jwsPrivateKey,
-                        signOptions
-                    );
-
-                    const verified = verify(token, this.jwsPrivateKey);
-                    console.log(verified);
-                    res.send({ token });
-                } catch (error) {
-                    console.log(error);
-                }
-            } else {
-                res.status(400).send({
-                    message: "Incorrect request payload. Username or Passord missed or have incorrect format",
-                });
-            }
-        });
-        this.app.use(testPath, testRouter);
     }
 
     private initializeErrorHandlers() {
@@ -108,9 +65,4 @@ export class Service {
             res.status(404).send(`Unresolved route: ${req.method} ${req.path}`);
         });
     }
-}
-
-export interface ServiceParams {
-    port: number;
-    jwsPrivateKey: string;
 }

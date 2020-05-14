@@ -1,0 +1,1012 @@
+{
+	"info": {
+		"_postman_id": "a466d1b5-e5db-42d7-a5fb-6fd74ea0b86f",
+		"name": "Api Service",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "User",
+			"item": [
+				{
+					"name": "List",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "f382b7eb-6b6f-4075-a881-efb0194a77cf",
+								"exec": [
+									"tests[\"Status code is 200\"] = responseCode.code === 200;\r",
+									"\r",
+									"var jsonData = JSON.parse(responseBody);\r",
+									"\r",
+									"tests[\"Object is returned\"] = !!jsonData;\r",
+									"if (!jsonData) {\r",
+									"    return;\r",
+									"}\r",
+									"\r",
+									"tests[\"Returned object is array\"] = Array.isArray(jsonData);\r",
+									"\r",
+									"pm.globals.set(\"users_count\", \"\"+jsonData.length);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/users",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get user",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "e7931325-ce21-4090-a236-480b8b3a7754",
+								"exec": [
+									"tests[\"Status code is 200\"] = responseCode.code === 200;\r",
+									"\r",
+									"var jsonData = JSON.parse(responseBody);\r",
+									"\r",
+									"tests[\"Object is returned\"] = !!jsonData;\r",
+									"if (!jsonData) {\r",
+									"    return;\r",
+									"}\r",
+									"\r",
+									"tests[\"Result has ID\"] = !!jsonData.id && !isNaN(jsonData.id);\r",
+									"tests[\"Result has username\"] = !!jsonData.username;\r",
+									"tests[\"Result has email\"] = !!jsonData.email;"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/users/1",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"users",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "dfc31208-1be5-421d-9d3e-8a49ebac9f50",
+								"exec": [
+									"tests[\"Status code is 200\"] = responseCode.code === 200;\r",
+									"\r",
+									"var jsonData = JSON.parse(responseBody);\r",
+									"\r",
+									"tests[\"Object is returned\"] = !!jsonData;\r",
+									"if (!jsonData) {\r",
+									"    return;\r",
+									"}\r",
+									"\r",
+									"tests[\"Result has ID\"] = !!jsonData.id && !isNaN(jsonData.id);\r",
+									"tests[\"Result has username\"] = !!jsonData.username;\r",
+									"tests[\"Result has email\"] = !!jsonData.email;\r",
+									"\r",
+									"postman.setGlobalVariable(\"new_user_id\", jsonData.id);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"TestUser\",\n    \"email\": \"ivan@gmail.com\",\n    \"password\": \"1234567890\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/users",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "efee5d16-0439-462f-8874-a7cb1df57559",
+								"exec": [
+									"tests[\"Status code is 200\"] = responseCode.code === 200;\r",
+									"\r",
+									"var jsonData = JSON.parse(responseBody);\r",
+									"\r",
+									"tests[\"Object is returned\"] = !!jsonData;\r",
+									"if (!jsonData) {\r",
+									"    return;\r",
+									"}\r",
+									"\r",
+									"tests[\"Result has ID\"] = !!jsonData.id && !isNaN(jsonData.id);\r",
+									"tests[\"Result has username\"] = !!jsonData.username;\r",
+									"tests[\"Result has email\"] = !!jsonData.email;"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"blah-blah@gmail.com\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/users/{{new_user_id}}",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"users",
+								"{{new_user_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "7de0de63-de8e-420f-ae73-8a064a5497de",
+								"exec": [
+									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/users/{{new_user_id}}",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"users",
+								"{{new_user_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "List",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "a61ad982-edc6-4021-a63c-5e62c4e376b0",
+								"exec": [
+									"tests[\"Status code is 200\"] = responseCode.code === 200;\r",
+									"\r",
+									"var jsonData = JSON.parse(responseBody);\r",
+									"\r",
+									"tests[\"Object is returned\"] = !!jsonData;\r",
+									"if (!jsonData) {\r",
+									"    return;\r",
+									"}\r",
+									"\r",
+									"tests[\"Returned object is array\"] = Array.isArray(jsonData);\r",
+									"tests[\"Users were deleted properly\"] = (\"\"+jsonData.length === pm.variables.get(\"users_count\"));"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/users",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"users"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Apps",
+			"item": [
+				{
+					"name": "Apps",
+					"item": [
+						{
+							"name": "List",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{host}}/users/4/apps/",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"users",
+										"4",
+										"apps",
+										""
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"name\": \"My third1 app\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{host}}/users/1/apps",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"users",
+										"1",
+										"apps"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{host}}/users/4/apps",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"users",
+										"4",
+										"apps"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get one",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{host}}/users/4/apps/1",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"users",
+										"4",
+										"apps",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update",
+							"request": {
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"id\": 2\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{host}}/users/4/apps",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"users",
+										"4",
+										"apps"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"protocolProfileBehavior": {},
+					"_postman_isSubFolder": true
+				},
+				{
+					"name": "List",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/users/4/apps/",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"users",
+								"4",
+								"apps",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\": \"My third1 app\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/users/1/apps",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"users",
+								"1",
+								"apps"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/users/4/apps",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"users",
+								"4",
+								"apps"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get one",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/users/4/apps/1",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"users",
+								"4",
+								"apps",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"id\": 2\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/users/4/apps",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"users",
+								"4",
+								"apps"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Events",
+			"item": [
+				{
+					"name": "List",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "2a28ac4e-196d-4a5e-b1d9-e2fe4f6eb54f",
+								"exec": [
+									"for (let i = 0; i < 100; i++) {",
+									"    tests[\"\" + i] = true;",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/users/",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"users",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\": \"My third1 app\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/users/1/apps",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"users",
+								"1",
+								"apps"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/users/4/apps",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"users",
+								"4",
+								"apps"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get one",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/users/4/apps/1",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"users",
+								"4",
+								"apps",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"id\": 2\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/users/4/apps",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"users",
+								"4",
+								"apps"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Logs",
+			"item": [
+				{
+					"name": "Apps",
+					"item": [
+						{
+							"name": "List",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{host}}/users/4/apps/",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"users",
+										"4",
+										"apps",
+										""
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"name\": \"My third1 app\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{host}}/users/1/apps",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"users",
+										"1",
+										"apps"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{host}}/users/4/apps",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"users",
+										"4",
+										"apps"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get one",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{host}}/users/4/apps/1",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"users",
+										"4",
+										"apps",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update",
+							"request": {
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"id\": 2\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{host}}/users/4/apps",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"users",
+										"4",
+										"apps"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"protocolProfileBehavior": {},
+					"_postman_isSubFolder": true
+				},
+				{
+					"name": "List",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/users/4/apps/",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"users",
+								"4",
+								"apps",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\": \"My third1 app\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/users/1/apps",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"users",
+								"1",
+								"apps"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/users/4/apps",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"users",
+								"4",
+								"apps"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get one",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/users/4/apps/1",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"users",
+								"4",
+								"apps",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"id\": 2\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/users/4/apps",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"users",
+								"4",
+								"apps"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "409bb343-85c2-4efa-88ff-03c6fce5a10c",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "a85f836b-1fe4-4db8-9fe0-1860aef6e98f",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"id": "24e65e0a-3802-4153-b63e-6da9cee40916",
+			"key": "host_name",
+			"value": "localhost",
+			"type": "string"
+		},
+		{
+			"id": "9dc3a58f-358b-4e9a-91a5-85efd4920166",
+			"key": "port",
+			"value": "4939",
+			"type": "string"
+		},
+		{
+			"id": "378e9680-4ec5-4d2d-8c84-a48ab85260be",
+			"key": "host",
+			"value": "{{host_name}}:{{port}}",
+			"type": "string"
+		}
+	],
+	"protocolProfileBehavior": {}
+}

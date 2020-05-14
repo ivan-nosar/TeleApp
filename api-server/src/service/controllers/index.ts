@@ -1,5 +1,6 @@
 import { AppController } from "./app";
+import { AuthController } from "./authorize";
 import { BaseController } from "./base";
 import { UserController } from "./user";
 
-export { AppController, BaseController, UserController };
+export { AppController, AuthController, BaseController, UserController };

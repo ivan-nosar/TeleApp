@@ -10,6 +10,9 @@ export class App extends BaseEntity {
     @Column()
     public name!: string;
 
+    @Column()
+    public secret!: string;
+
     @ManyToOne(type => User, user => user.apps, {
         cascade: true
     })

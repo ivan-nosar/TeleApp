@@ -1,5 +1,6 @@
-import { BaseEntity, Column, Entity, PrimaryGeneratedColumn, ManyToOne } from "typeorm";
+import { BaseEntity, Column, Entity, PrimaryGeneratedColumn, ManyToOne, OneToMany } from "typeorm";
 import { User } from "./user";
+import { Session } from "./session";
 
 @Entity()
 export class App extends BaseEntity {
@@ -17,4 +18,7 @@ export class App extends BaseEntity {
         cascade: true
     })
     public user!: User;
+
+    @OneToMany(type => Session, session => session.app)
+    public sessions!: Session[];
 }

@@ -1,11 +1,10 @@
 import { BaseController } from "./base";
 import { Request, Response } from "express";
 import * as Entities from "../database/entities";
-import * as Models from "../models";
+import * as Models from "../http-models";
 import { Get, Controller, Delete, Patch, Post } from "../decorators/http-controllers";
 import { ValidateBody, Safe } from "../decorators/http-validators";
 import { assignOwnPropertiesTo, updateOwnPropertiesWith, fitToPropertiesOf } from "../../helpers/models";
-import { databaseManager } from "../database/database-manager";
 import { App } from "../database/entities/app";
 import { User } from "../database/entities/user";
 import { v4 as uuidv4 } from "uuid";

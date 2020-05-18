@@ -1,10 +1,15 @@
 import * as bodyParser from "body-parser";
 import * as express from "express";
 import { Application, Router, Request, Response } from "express";
-import { AppController, BaseController, UserController } from "./controllers";
+import {
+    AppController,
+    AuthController,
+    BaseController,
+    UserController,
+    SessionController
+} from "./controllers";
 import { logger } from "../logger";
 import { databaseManager } from "./database/database-manager";
-import { AuthController } from "./controllers/authorize";
 import { configuration } from "../configuration";
 
 export class Service {
@@ -53,6 +58,7 @@ export class Service {
             new AuthController(),
             new UserController(),
             new AppController(),
+            new SessionController(),
         ];
 
         controllers.forEach(controller => {

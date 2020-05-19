@@ -150,7 +150,7 @@ export class AppController extends BaseController {
     }
 
     @Patch("/:id")
-    @ValidateBody(Models.App, false)
+    @ValidateBody(Models.App, { strict: false })
     @Safe
     @AutnorizedByUser
     async patch(user: User, req: Request, res: Response) {

@@ -1,5 +1,5 @@
 import { createConnection, Connection } from "typeorm";
-import { App, Session, User } from "./entities";
+import { App, Session, User, Log, Metric } from "./entities";
 
 class DatabaseManager {
     private connectionInfo: DbConnectionInfo;
@@ -14,7 +14,9 @@ class DatabaseManager {
         const entities = [
             User,
             App,
-            Session
+            Session,
+            Log,
+            Metric
         ];
 
         this._connection = await createConnection({

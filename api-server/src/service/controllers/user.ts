@@ -48,7 +48,7 @@ export class UserController extends BaseController {
     }
 
     @Patch("/:id")
-    @ValidateBody(Models.User, false)
+    @ValidateBody(Models.User, { strict: false })
     @Safe
     async patch(req: Request, res: Response) {
         const body = req.body;

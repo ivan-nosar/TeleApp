@@ -5,6 +5,8 @@ import {
     AppController,
     AuthController,
     BaseController,
+    LogController,
+    MetricController,
     UserController,
     SessionController
 } from "./controllers";
@@ -59,6 +61,8 @@ export class Service {
             new UserController(),
             new AppController(),
             new SessionController(),
+            new LogController(),
+            new MetricController()
         ];
 
         controllers.forEach(controller => {

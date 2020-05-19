@@ -1,6 +1,15 @@
-import { BaseEntity, Column, Entity, PrimaryGeneratedColumn, ManyToOne, CreateDateColumn } from "typeorm";
-import { User } from "./user";
+import {
+    BaseEntity,
+    Column,
+    Entity,
+    PrimaryGeneratedColumn,
+    ManyToOne,
+    CreateDateColumn,
+    OneToMany
+} from "typeorm";
 import { App } from "./app";
+import { Log } from "./log";
+import { Metric } from "./metric";
 
 @Entity()
 export class Session extends BaseEntity {
@@ -28,4 +37,10 @@ export class Session extends BaseEntity {
         cascade: true
     })
     public app!: App;
+
+    @OneToMany(type => Log, log => log.session)
+    public logs!: Log[];
+
+    @OneToMany(type => Metric, metric => metric.session)
+    public metrics!: Log[];
 }

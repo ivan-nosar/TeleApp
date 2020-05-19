@@ -57,7 +57,7 @@ export class SessionController extends BaseController {
     }
 
     @Post()
-    @ValidateBody(Models.Session, true)
+    @ValidateBody(Models.Session, { strict: true })
     @Safe
     async post(req: Request, res: Response) {
         const body = req.body;

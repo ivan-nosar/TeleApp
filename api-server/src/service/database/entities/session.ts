@@ -14,7 +14,7 @@ import { Metric } from "./metric";
 @Entity()
 export class Session extends BaseEntity {
 
-    @PrimaryGeneratedColumn()
+    @PrimaryGeneratedColumn({ type: "bigint" })
     public id!: number;
 
     @CreateDateColumn()
@@ -22,9 +22,6 @@ export class Session extends BaseEntity {
 
     @Column()
     public deviceModelName!: string;
-
-    @Column()
-    public deviceId!: string;
 
     @Column()
     public osVersionName!: string;

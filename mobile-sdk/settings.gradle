@@ -1,2 +1,3 @@
-rootProject.name='Tele App - Android SDK'
+rootProject.name='TeleAppDemo'
 include ':app'
+include ':tele_app_android_sdk'

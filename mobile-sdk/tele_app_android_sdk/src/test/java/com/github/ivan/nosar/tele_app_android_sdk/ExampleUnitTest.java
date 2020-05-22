@@ -1,4 +1,4 @@
-package com.github.ivan.nosar.teleapp_android;
+package com.github.ivan.nosar.tele_app_android_sdk;
 
 import org.junit.Test;
 

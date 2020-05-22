@@ -1,36 +1,31 @@
-apply plugin: 'com.android.application'
+apply plugin: 'com.android.library'
 
 android {
     signingConfigs {
         debug {
             storeFile file('D:\\Projects\\tele-app\\mobile-sdk\\keystore.jks')
+            keyAlias = 'key0'
             storePassword 'braveheart'
             keyPassword 'braveheart'
-            keyAlias = 'key0'
         }
         release {
             storeFile file('D:\\Projects\\tele-app\\mobile-sdk\\keystore.jks')
-            storePassword var
-            keyAlias = var1
-            keyPassword var
+            storePassword 'braveheart'
+            keyPassword 'braveheart'
+            keyAlias = 'key0'
         }
     }
     compileSdkVersion 29
     buildToolsVersion "29.0.3"
 
-    compileOptions {
-        sourceCompatibility = 1.8
-        targetCompatibility = 1.8
-    }
-
     defaultConfig {
-        applicationId "com.github.ivan.nosar.tele_app_demo"
-        minSdkVersion 21
+        minSdkVersion 19
         targetSdkVersion 29
         versionCode 1
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles 'consumer-rules.pro'
     }
 
     buildTypes {
@@ -45,11 +40,21 @@ android {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
+    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
+
     implementation 'androidx.appcompat:appcompat:1.1.0'
-    implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
-
-    implementation project(':tele_app_android_sdk')
 }
+
+//apply from: 'publish.gradle'
+
+ext {
+    PUBLISH_GROUP_ID = 'com.github.ivan-nosar'
+    PUBLISH_ARTIFACT_ID = 'tele-app-android-sdk'
+    PUBLISH_VERSION = '0.1'
+}
+
+apply from: 'deploy.gradle'

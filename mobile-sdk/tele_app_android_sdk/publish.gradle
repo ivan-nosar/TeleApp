@@ -1,0 +1,23 @@
+apply plugin: 'maven-publish'
+
+task sourceJar(type: Jar) {
+    from android.sourceSets.main.java.srcDirs
+    classifier "sources"
+}
+
+publishing {
+    publications {
+        TeleAppAndroidSdk(MavenPublication) {
+            groupId 'com.github.ivan-nosar'
+            artifactId 'tele-app-android-sdk'
+            version '0.1'
+            artifact(sourceJar)
+            artifact("$buildDir/outputs/aar/tele_app_android_sdk-release.aar")
+        }
+    }
+    repositories {
+        maven {
+            url "$buildDir/repo"
+        }
+    }
+}

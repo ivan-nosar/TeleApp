@@ -4,7 +4,7 @@ import { Session } from ".";
 @Entity()
 export class Log extends BaseEntity {
 
-    @PrimaryGeneratedColumn()
+    @PrimaryGeneratedColumn({ type: "bigint" })
     public id!: number;
 
     @CreateDateColumn()

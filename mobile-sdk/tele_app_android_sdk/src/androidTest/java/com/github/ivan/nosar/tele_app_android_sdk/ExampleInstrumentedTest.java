@@ -1,4 +1,4 @@
-package com.github.ivan.nosar.teleapp_android;
+package com.github.ivan.nosar.tele_app_android_sdk;
 
 import android.content.Context;
 
@@ -22,6 +22,6 @@ public class ExampleInstrumentedTest {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
 
-        assertEquals("com.github.ivan.nosar.teleapp_android", appContext.getPackageName());
+        assertEquals("com.github.ivan.nosar.tele_app_android_sdk.test", appContext.getPackageName());
     }
 }

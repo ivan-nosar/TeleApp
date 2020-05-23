@@ -70,9 +70,9 @@ publishing {
                 }
                 // Version control info, if you're using GitHub, follow the format as seen here
                 scm {
-                    connection = 'scm:git:github.com/autsoft/krate.git'
-                    developerConnection = 'scm:git:ssh://github.com/autsoft/krate.git'
-                    url = 'https://github.com/autsoft/krate/tree/master'
+                    connection = 'scm:git:github.com/ivan-nosar/TeleApp.git/'
+                    developerConnection = 'scm:git:ssh://github.com/ivan-nosar/TeleApp.git/'
+                    url = 'https://github.com/ivan-nosar/TeleApp'
                 }
 
                 // A slightly hacky fix so that your POM will include any transitive dependencies

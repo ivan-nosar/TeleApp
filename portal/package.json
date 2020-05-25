@@ -1,0 +1,50 @@
+{
+  "name": "portal",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@material-ui/core": "^4.10.0",
+    "@material-ui/icons": "^4.9.1",
+    "history": "^4.10.1",
+    "react": "16.13.1",
+    "react-dom": "16.13.1",
+    "react-router": "5.2.0",
+    "react-router-dom": "5.2.0",
+    "react-scripts": "3.4.1",
+    "superagent": "5.2.2"
+  },
+  "devDependencies": {
+    "@types/jest": "^24.9.1",
+    "@types/node": "^12.12.42",
+    "@types/react": "^16.9.35",
+    "@types/react-router": "5.1.7",
+    "@types/react-router-dom": "5.1.5",
+    "@types/react-dom": "^16.9.8",
+    "@types/superagent": "3.5.8",
+    "cross-env": "7.0.0",
+    "tslint": "5.20.1",
+    "tslint-eslint-rules": "5.4.0",
+    "typescript": "^3.7.5"
+  },
+  "scripts": {
+    "start": "cross-env PORT=80 react-scripts start",
+    "build": "react-scripts build",
+    "lint": "tslint -c tslint.json -p tsconfig.json",
+    "lint:fix": "npm run lint -- --fix"
+  },
+  "eslintConfig": {
+    "extends": "react-app"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}

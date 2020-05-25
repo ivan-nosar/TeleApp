@@ -23,6 +23,9 @@ export class Service {
         const { port } = configuration;
         this.port = port;
 
+        const cors = require("cors");
+        this.app.use(cors());
+
         this.initializeMiddleware();
         this.initializeRoutes();
         this.initializeErrorHandlers();

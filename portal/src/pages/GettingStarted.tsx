@@ -159,7 +159,7 @@ const useStyles = makeStyles((theme: any) => ({
     },
 }));
 
-export function Sessions(props: any) {
+export function GettingStarted(props: any) {
     const [state, setState] = React.useState<State>({
         appName: "",
         appId: 0,

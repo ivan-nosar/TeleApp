@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { Redirect } from "react-router-dom";
 import { checkSigning, extractSignedUser, SignedUserInfo } from "../helpers/signing";
 import * as superagent from "superagent";
-import { Notes, Equalizer, Search } from "@material-ui/icons";
+import { Search } from "@material-ui/icons";
 import {
     Container,
     Typography,
@@ -184,14 +184,6 @@ export function User(props: any) {
             { renderNewAppDialog(state, setState, user, classes) }
         </React.Fragment>
     );
-    // return (
-    //     <div>
-    //         <p>User {user.id}</p>
-    //         <p>{(state.apps && state.apps.length) || 0}</p>
-    //         <p>Logs: <Notes></Notes></p>
-    //         <p>Metrics: <Equalizer></Equalizer></p>
-    //     </div>
-    // );
 }
 
 function renderEmpty(state: State, setState: (state: State) => void, user: SignedUserInfo, classes: any) {
@@ -248,10 +240,6 @@ function renderAppsList(state: State, setState: (state: State) => void, user: Si
             </Paper>
         </Container>
     );
-}
-
-function ListItemLink(props: ListItemProps<"a", { button?: true }>) {
-    return <ListItem button component="a" {...props} />;
 }
 
 function openNewAppDialog(state: State, setState: (state: State) => void) {

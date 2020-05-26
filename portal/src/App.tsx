@@ -6,6 +6,7 @@ import { Signin } from "./pages/Signin";
 import { Signup } from "./pages/Signup";
 import { User } from "./pages/User";
 import { Sessions } from "./pages/Sessions";
+import { GettingStarted } from "./pages/GettingStarted";
 
 const history = createBrowserHistory();
 
@@ -20,7 +21,8 @@ class App extends React.Component {
                   <Route exact path="/sign-up" component={ Signup }/>
                   <Route exact path="/user" component={ User }/>
                   <Route exact path="/user/:id" component={ User }/>
-                  <Route exact path="/user/:id/apps/:appId" component={ Sessions }/>
+                  <Route exact path="/user/:id/apps/:appId" component={ GettingStarted }/>
+                  <Route exact path="/user/:id/apps/:appId/sessions" component={ Sessions }/>
               </Switch>
           </Router>
         );

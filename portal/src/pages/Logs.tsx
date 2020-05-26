@@ -17,7 +17,9 @@ import {
     useTheme,
     CssBaseline,
     Paper,
-    Grid
+    Grid,
+    TextField,
+    ThemeProvider
 } from "@material-ui/core";
 import MenuIcon from "@material-ui/icons/Menu";
 import * as superagent from "superagent";
@@ -25,20 +27,15 @@ import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
+import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
+import ChevronRightIcon from "@material-ui/icons/ChevronRight";
+import NotesIcon from "@material-ui/icons/Notes";
+import EqualizerIcon from "@material-ui/icons/Equalizer";
+import TimelineIcon from "@material-ui/icons/Timeline";
+import CodeIcon from "@material-ui/icons/Code";
+import Container from "@material-ui/core/Container";
 import { renderDrawer } from "../sharedRenderers/AppDrawer";
-import {
-    BarChart,
-    CartesianGrid,
-    XAxis,
-    YAxis,
-    Legend,
-    Bar,
-    LineChart,
-    Line,
-    ResponsiveContainer,
-    ComposedChart
-} from "recharts";
-import * as recharts from "recharts";
+import { Search } from "@material-ui/icons";
 
 interface State {
     appName: string;
@@ -47,10 +44,10 @@ interface State {
     appSecret: string;
     dataLoaded: boolean;
     showAppSecretTooltip: boolean;
-    sessions: any[];
     logs: any[];
-    metrics: any[];
     drawerOpened: boolean;
+    filter: string;
+    filteredLogs: any[];
 }
 
 const drawerWidth = 240;
@@ -152,8 +149,8 @@ const useStyles = makeStyles((theme: any) => ({
     root: {
         display: "flex",
     },
-    contentDiv: {
-        margin: theme.spacing(3, 6, 0, 0),
+    contentPaper: {
+        margin: theme.spacing(3, 4, 0, 0),
     },
     codeBlock: {
         backgroundColor: "#F2F2F2",
@@ -166,24 +163,16 @@ const useStyles = makeStyles((theme: any) => ({
         fontSize: "14px",
         fontFamily: "Consolas"
     },
-    paper: {
-        padding: theme.spacing(2),
-        display: "flex",
-        overflow: "auto",
-        flexDirection: "column",
+    contentDiv: {
+        margin: theme.spacing(3, 6, 0, 0),
+        width: "100%"
     },
-    fixedHeight: {
-        height: 350,
-    },
-    fixedHeightMax: {
-        height: 725,
-    },
-    chartContainer: {
-        margin: theme.spacing(2, 0, 0, 0),
+    input: {
+        padding: theme.spacing(2, 4, 0, 4),
     }
 }));
 
-export function Sessions(props: any) {
+export function Logs(props: any) {
     const [state, setState] = React.useState<State>({
         appName: "",
         appId: 0,
@@ -191,9 +180,9 @@ export function Sessions(props: any) {
         appSecret: "",
         dataLoaded: false,
         showAppSecretTooltip: false,
-        sessions: [],
+        filter: "",
         logs: [],
-        metrics: [],
+        filteredLogs: [],
         drawerOpened: true
     });
     const classes = useStyles();
@@ -232,14 +221,6 @@ export function Sessions(props: any) {
                         console.error("Unable to retrieve user's data");
                     }
 
-                    const appSessionsResponse = await superagent
-                        .get(`http://localhost:4939/sessions/${user.id}/${appDataResponse.body.id}`)
-                        .set("Authorization", `Bearer ${user.authToken}`)
-                        .send();
-                    if (appSessionsResponse.status !== 200) {
-                        console.error("Unable to retrieve app's data");
-                    }
-
                     const logsResponse = await superagent
                         .get(`http://localhost:4939/sessions/${user.id}/${appDataResponse.body.id}/logs`)
                         .set("Authorization", `Bearer ${user.authToken}`)
@@ -248,20 +229,11 @@ export function Sessions(props: any) {
                         console.error("Unable to retrieve app's data");
                     }
 
-                    const metricsResponse = await superagent
-                        .get(`http://localhost:4939/sessions/${user.id}/${appDataResponse.body.id}/metrics`)
-                        .set("Authorization", `Bearer ${user.authToken}`)
-                        .send();
-                    if (metricsResponse.status !== 200) {
-                        console.error("Unable to retrieve app's data");
-                    }
-
                     const newState: State = JSON.parse(JSON.stringify(state));
                     newState.appName = appDataResponse.body.name || "";
                     newState.appId = appDataResponse.body.id || 0;
-                    newState.sessions = appSessionsResponse.body || [];
                     newState.logs = logsResponse.body || [];
-                    newState.metrics = metricsResponse.body || [];
+                    newState.filteredLogs = logsResponse.body || [];
                     newState.username = userDataResponse.body.username || "";
                     newState.appSecret = appSecretResponse.body.secret || "";
                     newState.dataLoaded = true;
@@ -304,7 +276,7 @@ export function Sessions(props: any) {
 
             { renderDrawer(state, setState, user, classes, theme) }
 
-            { renderContent(state, setState, user, classes) }
+            { renderContent(state, setState, user, classes, theme) }
         </div>
     );
 }
@@ -362,7 +334,7 @@ function renderToolbar(state: State, setState: (state: State) => void, user: Sig
                             href={`/user/${user.id}/apps/${state.appId}`}>
                             {state.appName}
                         </Link>
-                        <Typography className={classes.endBreadcrumb}>Sessions</Typography>
+                        <Typography className={classes.endBreadcrumb}>Logs</Typography>
                     </Breadcrumbs>
 
                     <Tooltip
@@ -387,219 +359,74 @@ function renderToolbar(state: State, setState: (state: State) => void, user: Sig
     );
 }
 
-function renderContent(state: State, setState: (state: State) => void, user: SignedUserInfo, classes: any) {
-    const data = prepareDataForVisualization(state.sessions);
-    const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
-    const fixedHeightMaxPaper = clsx(classes.paper, classes.fixedHeightMax);
+function renderContent(
+    state: State,
+    setState: (state: State) => void,
+    user: SignedUserInfo,
+    classes: any,
+    theme: any
+) {
+    const dateLocaleOptions = {
+        year: "numeric",
+        month: "short",
+        day: "numeric",
+        hour: "numeric",
+        minute: "numeric",
+        second: "numeric"
+    };
+    const listItems = state.filteredLogs.map(log => {
+        const localizedTimestamp = (new Date(log.timestamp)).toLocaleString("en-EN", dateLocaleOptions);
+        return (
+            <div key={log.id}>
+                <ListItem>
+                    <ListItemText secondary={localizedTimestamp} primary={log.text} />
+                </ListItem>
+                <Divider />
+            </div>
+        );
+    });
+
+    const filterLogs = (filter: string) => {
+        const newState: State = JSON.parse(JSON.stringify(state));
+        newState.filteredLogs = newState.logs.filter((log: any) => {
+            const localizedTimestamp = (new Date(log.timestamp)).toLocaleString("en-EN", dateLocaleOptions);
+            return (log.text.includes(filter)) || (localizedTimestamp.includes(filter));
+        });
+        newState.filter = filter;
+        setState(newState as any);
+    };
 
     return (
         <div className={classes.contentDiv}>
             <Toolbar />
-
             <Grid container spacing={3}>
                 <Grid item xs={12}>
-                    <Paper className={fixedHeightPaper}>
-                        <Typography component="h1" variant="h5">
-                        Sessions per day
-                        </Typography>
-                        <ResponsiveContainer className={classes.chartContainer}>
-                            <LineChart
-                                data={data.sessionsPerDay}>
-                                <CartesianGrid strokeDasharray="3 3" />
-                                <XAxis dataKey="timestamp" />
-                                <YAxis/>
-                                <recharts.Tooltip />
-                                <Line dataKey="count" stroke="#6465a5" type="monotone" strokeWidth={3}/>
-                            </LineChart>
-                        </ResponsiveContainer>
-                    </Paper>
-                </Grid>
-                <Grid item xs={6}>
-                    <Grid container spacing={3}>
-                        <Grid item xs={12}>
-                            <Paper className={fixedHeightPaper}>
-                                <Typography component="h1" variant="h5">
-                                OS versions utilization
-                                </Typography>
-                                <ResponsiveContainer className={classes.chartContainer}>
-                                    <BarChart data={data.osUtilization}>
-                                        <CartesianGrid strokeDasharray="3 3" />
-                                        <XAxis dataKey="name" />
-                                        <YAxis dataKey="count"/>
-                                        <recharts.Tooltip />
-                                        <Bar dataKey="count" fill="#0584f2" />
-                                    </BarChart>
-                                </ResponsiveContainer>
-                            </Paper>
-                        </Grid>
-                        <Grid item xs={12}>
-                            <Paper className={fixedHeightPaper}>
-                                <Typography component="h1" variant="h5">
-                                Locales utilization
-                                </Typography>
-                                <ResponsiveContainer className={classes.chartContainer}>
-                                    <BarChart data={data.localeUtilization}>
-                                        <CartesianGrid strokeDasharray="3 3" />
-                                        <XAxis dataKey="name" />
-                                        <YAxis dataKey="count"/>
-                                        <recharts.Tooltip />
-                                        <Bar dataKey="count" fill="#82ca9d" />
-                                    </BarChart>
-                                </ResponsiveContainer>
-                            </Paper>
-                        </Grid>
-                    </Grid>
-                </Grid>
-                <Grid item xs={6}>
-                    <Paper className={fixedHeightMaxPaper}>
-                        <Typography component="h1" variant="h5">
-                        Device models utilization
-                        </Typography>
-                        <ResponsiveContainer className={classes.chartContainer}>
-                            <ComposedChart
-                                data={data.devicesUtilization}
-                                layout="vertical"
-                                margin={{
-                                    left: 40,
-                                }}>
-                                <CartesianGrid stroke="#f5f5f5" />
-                                <XAxis dataKey="count" type="number" />
-                                <YAxis dataKey="name" type="category"/>
-                                <recharts.Tooltip />
-                                <Bar barSize={20} dataKey="count" fill="#f28a30" />
-                            </ComposedChart>
-                        </ResponsiveContainer>
+                    <Paper>
+                        <TextField
+                            fullWidth
+                            type="search"
+                            className={classes.input}
+                            placeholder="Filter logs"
+                            inputProps={{ "aria-label": "filter logs" }}
+                            value={state.filter}
+                            onChange={(event: any) => {
+                                const newFilter = event.target.value;
+                                filterLogs(newFilter);
+                            }}
+                        />
+                        <br />
+                        {/* <Typography className={classes.input} component="h7" variant="h5">
+                            Count: {state.logs.length}
+                        </Typography> */}
+                        <ListItemText className={classes.input} primary={`Count: ${state.filteredLogs.length}`} />
+                        <Divider />
+
+                        <List component="nav" aria-label="main mailbox folders">
+                            { listItems }
+                        </List>
                     </Paper>
                 </Grid>
             </Grid>
         </div>
     );
-}
-
-interface Session {
-    id: number;
-    timestamp: string;
-    deviceModelName: string;
-    osVersionName: string;
-    localeName: string;
-}
-
-interface VisualizationData {
-    sessionsPerDay: any[];
-    devicesUtilization: any[];
-    osUtilization: any[];
-    localeUtilization: any[];
-}
-
-function prepareDataForVisualization(sessions: Session[]): VisualizationData {
-    const days = 30;
-
-    const result: VisualizationData = {
-        sessionsPerDay: [],
-        devicesUtilization: [],
-        osUtilization: [],
-        localeUtilization: []
-    };
-
-    // Sessions per day
-    const dateLocaleOptions = {
-        month: "short",
-        day: "numeric"
-    };
-    const sessionsWithDayTimeStamp = sessions.map((session: Session) => {
-        session.timestamp = (new Date(session.timestamp)).toLocaleString("en-EN", dateLocaleOptions);
-        return session;
-    });
-    const sessionsPerDay: any[] = [];
-    const currentDate = new Date();
-    for (let i = 0; i < days; i++) {
-        currentDate.setDate(currentDate.getDate() - 1);
-        const timestamp = currentDate.toLocaleString("en-EN", dateLocaleOptions);
-        const count = sessionsWithDayTimeStamp.filter(session => session.timestamp === timestamp).length;
-        sessionsPerDay.push({
-            timestamp,
-            count
-        });
-    }
-    result.sessionsPerDay = sessionsPerDay.reverse();
-
-    // Devices utilizaion (top 20)
-    const deviceReducer = sessions.reduce((reducer: any, session: Session) => {
-        if (session.deviceModelName in reducer) {
-            reducer[session.deviceModelName]++;
-        } else {
-            reducer[session.deviceModelName] = 1;
-        }
-        return reducer;
-    }, {});
-    let devicesUtilization = [];
-    for (const key in deviceReducer) {
-        devicesUtilization.push({
-            name: key,
-            count: deviceReducer[key]
-        });
-    }
-    devicesUtilization = devicesUtilization.sort((a, b) => b.count - a.count);
-    const topDevices = devicesUtilization.slice(0, 19);
-    const otherDevices = devicesUtilization.slice(19).reduce((sum: number, current: any) => {
-        sum += current.count;
-        return sum;
-    }, 0);
-    result.devicesUtilization = otherDevices ?
-        [...topDevices, { name: "Others", count: otherDevices }] :
-        devicesUtilization.slice(0, 20);
-
-    // OS version utilization (top 10) - Bar chart
-    const osReducer = sessions.reduce((reducer: any, session: Session) => {
-        if (session.osVersionName in reducer) {
-            reducer[session.osVersionName]++;
-        } else {
-            reducer[session.osVersionName] = 1;
-        }
-        return reducer;
-    }, {});
-    let osUtilization = [];
-    for (const key in osReducer) {
-        osUtilization.push({
-            name: key,
-            count: osReducer[key]
-        });
-    }
-    osUtilization = osUtilization.sort((a, b) => b.count - a.count);
-    const topOs = osUtilization.slice(0, 9);
-    const otherOs = osUtilization.slice(9).reduce((sum: number, current: any) => {
-        sum += current.count;
-        return sum;
-    }, 0);
-    result.osUtilization = otherOs ?
-        [...topOs, { name: "Others", count: otherOs }] :
-        osUtilization.slice(0, 10);
-
-    // Locale utilization (top 10) - Bar chart
-    const localeReducer = sessions.reduce((reducer: any, session: Session) => {
-        if (session.localeName in reducer) {
-            reducer[session.localeName]++;
-        } else {
-            reducer[session.localeName] = 1;
-        }
-        return reducer;
-    }, {});
-    let localeUtilization = [];
-    for (const key in localeReducer) {
-        localeUtilization.push({
-            name: key,
-            count: localeReducer[key]
-        });
-    }
-    localeUtilization = localeUtilization.sort((a, b) => b.count - a.count);
-    const topLocale = localeUtilization.slice(0, 9);
-    const otherLocale = localeUtilization.slice(9).reduce((sum: number, current: any) => {
-        sum += current.count;
-        return sum;
-    }, 0);
-    result.localeUtilization = otherLocale ?
-        [...topLocale, { name: "Others", count: otherLocale }] :
-        localeUtilization.slice(0, 10);
-
-    return result;
 }

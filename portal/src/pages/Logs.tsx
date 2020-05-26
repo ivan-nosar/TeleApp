@@ -415,9 +415,6 @@ function renderContent(
                             }}
                         />
                         <br />
-                        {/* <Typography className={classes.input} component="h7" variant="h5">
-                            Count: {state.logs.length}
-                        </Typography> */}
                         <ListItemText className={classes.input} primary={`Count: ${state.filteredLogs.length}`} />
                         <Divider />
 

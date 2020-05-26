@@ -16,15 +16,20 @@ import {
     ListItemText,
     useTheme,
     CssBaseline,
-    Paper
+    Paper,
+    Grid,
+    TextField,
+    ThemeProvider
 } from "@material-ui/core";
+import TreeItem from "@material-ui/lab/TreeItem";
+import TreeView from "@material-ui/lab/TreeView";
 import MenuIcon from "@material-ui/icons/Menu";
 import * as superagent from "superagent";
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
-import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
+import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import ChevronRightIcon from "@material-ui/icons/ChevronRight";
 import NotesIcon from "@material-ui/icons/Notes";
 import EqualizerIcon from "@material-ui/icons/Equalizer";
@@ -32,6 +37,7 @@ import TimelineIcon from "@material-ui/icons/Timeline";
 import CodeIcon from "@material-ui/icons/Code";
 import Container from "@material-ui/core/Container";
 import { renderDrawer } from "../sharedRenderers/AppDrawer";
+import { Search } from "@material-ui/icons";
 
 interface State {
     appName: string;
@@ -40,8 +46,10 @@ interface State {
     appSecret: string;
     dataLoaded: boolean;
     showAppSecretTooltip: boolean;
-    sessions: any[];
+    metrics: any[];
     drawerOpened: boolean;
+    filter: string;
+    filteredMetrics: any[];
 }
 
 const drawerWidth = 240;
@@ -157,6 +165,16 @@ const useStyles = makeStyles((theme: any) => ({
         fontSize: "14px",
         fontFamily: "Consolas"
     },
+    contentDiv: {
+        margin: theme.spacing(3, 6, 0, 0),
+        width: "100%"
+    },
+    input: {
+        padding: theme.spacing(2, 4, 0, 4),
+    },
+    treeView: {
+        //flexGrow: 1,
+    },
 }));
 
 export function Metrics(props: any) {
@@ -167,7 +185,9 @@ export function Metrics(props: any) {
         appSecret: "",
         dataLoaded: false,
         showAppSecretTooltip: false,
-        sessions: [],
+        filter: "",
+        metrics: [],
+        filteredMetrics: [],
         drawerOpened: true
     });
     const classes = useStyles();
@@ -206,18 +226,19 @@ export function Metrics(props: any) {
                         console.error("Unable to retrieve user's data");
                     }
 
-                    const appSessionsResponse = await superagent
-                        .get(`http://localhost:4939/sessions/${user.id}/${appDataResponse.body.id}`)
+                    const metricsResponse = await superagent
+                        .get(`http://localhost:4939/sessions/${user.id}/${appDataResponse.body.id}/metrics`)
                         .set("Authorization", `Bearer ${user.authToken}`)
                         .send();
-                    if (appSessionsResponse.status !== 200) {
+                    if (metricsResponse.status !== 200) {
                         console.error("Unable to retrieve app's data");
                     }
 
                     const newState: State = JSON.parse(JSON.stringify(state));
                     newState.appName = appDataResponse.body.name || "";
                     newState.appId = appDataResponse.body.id || 0;
-                    newState.sessions = appSessionsResponse.body || [];
+                    newState.metrics = metricsResponse.body || [];
+                    newState.filteredMetrics = metricsResponse.body || [];
                     newState.username = userDataResponse.body.username || "";
                     newState.appSecret = appSecretResponse.body.secret || "";
                     newState.dataLoaded = true;
@@ -260,7 +281,7 @@ export function Metrics(props: any) {
 
             { renderDrawer(state, setState, user, classes, theme) }
 
-            { renderContent(state, setState, user, classes) }
+            { renderContent(state, setState, user, classes, theme) }
         </div>
     );
 }
@@ -343,63 +364,95 @@ function renderToolbar(state: State, setState: (state: State) => void, user: Sig
     );
 }
 
-function renderContent(state: State, setState: (state: State) => void, user: SignedUserInfo, classes: any) {
+function renderContent(
+    state: State,
+    setState: (state: State) => void,
+    user: SignedUserInfo,
+    classes: any,
+    theme: any
+) {
+    const dateLocaleOptions = {
+        year: "numeric",
+        month: "short",
+        day: "numeric",
+        hour: "numeric",
+        minute: "numeric",
+        second: "numeric"
+    };
+    const listItems = state.filteredMetrics.map(log => {
+        const localizedTimestamp = (new Date(log.timestamp)).toLocaleString("en-EN", dateLocaleOptions);
+        return (
+            <div key={log.id}>
+                <ListItem>
+                    <ListItemText secondary={localizedTimestamp} >
+                        <JsonObjectTree content={log.content} />
+                    </ListItemText>
+                </ListItem>
+                <Divider />
+            </div>
+        );
+    });
+
+    const filterLogs = (filter: string) => {
+        const newState: State = JSON.parse(JSON.stringify(state));
+        newState.filteredMetrics = newState.metrics.filter((log: any) => {
+            const localizedTimestamp = (new Date(log.timestamp)).toLocaleString("en-EN", dateLocaleOptions);
+            return (JSON.stringify(log.content).includes(filter)) || (localizedTimestamp.includes(filter));
+        });
+        newState.filter = filter;
+        setState(newState as any);
+    };
+
     return (
-        <Container>
+        <div className={classes.contentDiv}>
             <Toolbar />
-            <Paper elevation={3} className={classes.contentPaper}>
-                <main className={classes.content}>
-                    <ol className={classes.listItemCounter}>
-                        <li>
-                            <Typography paragraph>
-                                Add the SDK to the project
-                            </Typography>
+            <Grid container spacing={3}>
+                <Grid item xs={12}>
+                    <Paper>
+                        <TextField
+                            fullWidth
+                            type="search"
+                            className={classes.input}
+                            placeholder="Filter logs"
+                            inputProps={{ "aria-label": "filter logs" }}
+                            value={state.filter}
+                            onChange={(event: any) => {
+                                const newFilter = event.target.value;
+                                filterLogs(newFilter);
+                            }}
+                        />
+                        <br />
+                        <ListItemText className={classes.input} primary={`Count: ${state.filteredMetrics.length}`} />
+                        <Divider />
 
-                            <Typography paragraph>
-                                In your&nbsp;
-                                <span className={classes.codeBlockInline}>app/build.gradle</span>
-                                &nbsp;add the following lines:
-                            </Typography>
+                        <List component="nav" aria-label="main mailbox folders">
+                            { listItems }
+                        </List>
+                    </Paper>
+                </Grid>
+            </Grid>
+        </div>
+    );
+}
 
-                            <p className={classes.codeBlock}>
-                                { "dependencies {" }
-                                <br />
-                                &nbsp;&nbsp;&nbsp;&nbsp;{ `implementation "com.github.ivan-nosar:tele-app-android-sdk:0.1` }
-                                <br />
-                                { "}" }
-                            </p>
-                        </li>
+function JsonObjectTree(props: any) {
+    const content = props.content;
 
-                        <li>
-                            <Typography paragraph>
-                                Start the SDK
-                            </Typography>
+    const classes = useStyles();
 
-                            <Typography paragraph>
-                                Open your app’s main activity class and add the following import statements.
-                            </Typography>
+    const renderTree = (nodes: RenderTree) => (
+        <TreeItem key={nodes.id} nodeId={nodes.id} label={nodes.name}>
+          {Array.isArray(nodes.children) ? nodes.children.map((node) => renderTree(node)) : null}
+        </TreeItem>
+    );
 
-                            <p className={classes.codeBlock}>
-                                { "import com.github.ivan.nosar.tele_app_android_sdk.TeleApp;" }
-                            </p>
-
-                            <Typography paragraph>
-                                Look for
-                                &nbsp;<span className={classes.codeBlockInline}>onCreate</span>
-                                &nbsp;callback in the same file and add the following.
-                            </Typography>
-
-                            <p className={classes.codeBlock}>
-                                { "if (!TeleApp.isConfigured()) {" }
-                                <br />
-                                &nbsp;&nbsp;&nbsp;&nbsp;{ `TeleApp.start(getApplication(), "${state.appSecret}");` }
-                                <br />
-                                { "}" }
-                            </p>
-                        </li>
-                    </ol>
-                </main>
-            </Paper>
-        </Container>
+    return (
+        <TreeView
+            className={classes.root}
+            defaultCollapseIcon={<ExpandMoreIcon />}
+            defaultExpanded={["root"]}
+            defaultExpandIcon={<ChevronRightIcon />}>
+            {renderTree(data)}
+        </TreeView>
     );
 }

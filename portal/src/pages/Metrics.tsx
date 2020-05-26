@@ -172,9 +172,6 @@ const useStyles = makeStyles((theme: any) => ({
     input: {
         padding: theme.spacing(2, 4, 0, 4),
     },
-    treeView: {
-        //flexGrow: 1,
-    },
 }));
 
 export function Metrics(props: any) {
@@ -440,11 +437,58 @@ function JsonObjectTree(props: any) {
 
     const classes = useStyles();
 
-    const renderTree = (nodes: RenderTree) => (
-        <TreeItem key={nodes.id} nodeId={nodes.id} label={nodes.name}>
-          {Array.isArray(nodes.children) ? nodes.children.map((node) => renderTree(node)) : null}
-        </TreeItem>
-    );
+    const renderTree = (nodes: any): any => {
+        if (typeof nodes !== "object") {
+            return (
+                <p className={classes.codeBlock}>
+                    { nodes }
+                </p>
+            );
+        }
+
+        const treeNodes: any[] = [];
+        for (const key in nodes) {
+            if (typeof nodes[key] !== "object") {
+                treeNodes.push(
+                    <TreeItem key={key} nodeId={key} label={key}>
+                        <p className={classes.codeBlock}>
+                            { nodes[key] }
+                        </p>
+                    </TreeItem>
+                );
+            } else if (nodes[key] === null) {
+                treeNodes.push(
+                    <TreeItem key={key} nodeId={key} label={key}>
+                        <p className={classes.codeBlock}>
+                            { nodes[key] }
+                        </p>
+                    </TreeItem>
+                );
+            } else if (Array.isArray(nodes[key])) {
+                const subNodes = nodes[key].map((node: any) => {
+                    const result = renderTree(node);
+                    return result;
+                });
+                treeNodes.push(
+                    <TreeItem key={key} nodeId={key} label={key}>
+                        {subNodes}
+                    </TreeItem>
+                );
+            } else {
+                treeNodes.push(renderTree(nodes[key]));
+            }
+        }
+
+        return treeNodes;
+    };
+
+    if (JSON.stringify(content) === "{}") {
+        return (
+            <p className={classes.codeBlock}>
+                { "{}" }
+            </p>
+        );
+    }
 
     return (
         <TreeView
@@ -452,7 +496,7 @@ function JsonObjectTree(props: any) {
             defaultCollapseIcon={<ExpandMoreIcon />}
             defaultExpanded={["root"]}
             defaultExpandIcon={<ChevronRightIcon />}>
-            {renderTree(data)}
+            {renderTree(content)}
         </TreeView>
     );
 }

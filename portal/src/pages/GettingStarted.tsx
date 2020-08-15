@@ -9,11 +9,6 @@ import {
     Link,
     Tooltip,
     IconButton,
-    Drawer,
-    List,
-    ListItem,
-    ListItemIcon,
-    ListItemText,
     useTheme,
     CssBaseline,
     Paper
@@ -24,12 +19,6 @@ import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
-import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
-import ChevronRightIcon from "@material-ui/icons/ChevronRight";
-import NotesIcon from "@material-ui/icons/Notes";
-import EqualizerIcon from "@material-ui/icons/Equalizer";
-import TimelineIcon from "@material-ui/icons/Timeline";
-import CodeIcon from "@material-ui/icons/Code";
 import Container from "@material-ui/core/Container";
 import { renderDrawer } from "../sharedRenderers/AppDrawer";
 
@@ -357,9 +346,20 @@ function renderContent(state: State, setState: (state: State) => void, user: Sig
                             </Typography>
 
                             <p className={classes.codeBlock}>
+                                { "compileOptions {" }
+                                <br />
+                                &nbsp;&nbsp;&nbsp;&nbsp;{ `sourceCompatibility = 1.8` }
+                                <br />
+                                &nbsp;&nbsp;&nbsp;&nbsp;{ `targetCompatibility = 1.8` }
+                                <br />
+                                { "}" }
+
+                                <br />
+                                <br />
+
                                 { "dependencies {" }
                                 <br />
-                                &nbsp;&nbsp;&nbsp;&nbsp;{ `implementation "com.github.ivan-nosar:tele-app-android-sdk:0.1` }
+                                &nbsp;&nbsp;&nbsp;&nbsp;{ `implementation "com.github.ivan-nosar:tele-app-android-sdk:0.1"` }
                                 <br />
                                 { "}" }
                             </p>

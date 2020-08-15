@@ -113,11 +113,11 @@ public class TeleApp {
         }
     }
 
-    public static void trackMetric(String name) {
-        trackMetric(name, new HashMap<String, Object>());
+    public static void trackMetric() {
+        trackMetric(new HashMap<String, Object>());
     }
 
-    public static void trackMetric(String name, Map<String, Object> properties) {
+    public static void trackMetric(Map<String, Object> properties) {
         TeleApp instance = getInstance();
         if (!isConfigured()) {
             android.util.Log.w("TeleApp not configured", "Please call `TeleApp.configure(...)` method before using this method");

@@ -1,7 +1,6 @@
 package com.github.ivan.nosar.tele_app_demo;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 
 import com.github.ivan.nosar.tele_app_android_sdk.TeleApp;
@@ -18,17 +17,13 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        try {
-            if (!TeleApp.isConfigured()) {
-                TeleApp.start(getApplication(), "e5208a81-bbb0-43e5-a6e0-b6a1ac9c823d");
-            }
-        } catch (Exception e) {
-            Log.e(e.getMessage(), "");
+        if (!TeleApp.isConfigured()) {
+            TeleApp.start(getApplication(), "e5208a81-bbb0-43e5-a6e0-b6a1ac9c823d");
         }
     }
 
     public void trackLog(View view) {
-        TeleApp.trackLog("Hey! I'm your first nice log =)");
+        TeleApp.trackLog("ISPU - protection of the diploma");
     }
 
     public void trackBadLog(View view) {
@@ -57,16 +52,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void trackEmptyMetric(View view) {
-        TeleApp.trackMetric("Empty metric");
+        TeleApp.trackMetric();
     }
 
     public void trackMetricWithProperties(View view) {
         Map<String, Object> properties = new HashMap<>();
-        properties.put("Category", "Music");
-        properties.put("FileName", "favorite.avi");
-        properties.put("Duration", 29.43);
-        int[] array = { 5, 234, 56 };
-        properties.put("Array", array);
-        TeleApp.trackMetric("Metric with properties", properties);
+        properties.put("Topic", "ISPU - protection of the diploma");
+        properties.put("Wanted qualification", "Master");
+        TeleApp.trackMetric(properties);
     }
 }

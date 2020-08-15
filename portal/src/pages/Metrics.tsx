@@ -9,17 +9,14 @@ import {
     Link,
     Tooltip,
     IconButton,
-    Drawer,
     List,
     ListItem,
-    ListItemIcon,
     ListItemText,
     useTheme,
     CssBaseline,
     Paper,
     Grid,
-    TextField,
-    ThemeProvider
+    TextField
 } from "@material-ui/core";
 import TreeItem from "@material-ui/lab/TreeItem";
 import TreeView from "@material-ui/lab/TreeView";
@@ -31,13 +28,7 @@ import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import ChevronRightIcon from "@material-ui/icons/ChevronRight";
-import NotesIcon from "@material-ui/icons/Notes";
-import EqualizerIcon from "@material-ui/icons/Equalizer";
-import TimelineIcon from "@material-ui/icons/Timeline";
-import CodeIcon from "@material-ui/icons/Code";
-import Container from "@material-ui/core/Container";
 import { renderDrawer } from "../sharedRenderers/AppDrawer";
-import { Search } from "@material-ui/icons";
 
 interface State {
     appName: string;
